@@ -40,6 +40,7 @@ void setup()
 {
   Serial.begin(115200);
 
+  // Init LVGL
   lv_init();
   ESP_ERROR_CHECK(esp_timer_create(&ticker_timer_args, &ticker_timer));
   ESP_ERROR_CHECK(esp_timer_start_periodic(ticker_timer, portTICK_RATE_MS * 1000));
@@ -58,7 +59,7 @@ void setup()
   // Display Buffer
   lv_disp_draw_buf_init(&disp_buf, buf, NULL, screenWidth * 10);
 
-  /*Initialize the display*/
+  // Initialize the display
   static lv_disp_drv_t disp_drv;
   lv_disp_drv_init(&disp_drv);
   disp_drv.hor_res = screenWidth;
@@ -74,8 +75,10 @@ void setup()
   indev_drv.read_cb = touchpad_read;
   lv_indev_drv_register(&indev_drv);
 
+  // Init generated ui component (and display it)
   ui_init();
 
+  // Init LVGL Update Timer
   ESP_ERROR_CHECK(esp_timer_create(&handler_timer_args, &handler_timer));
   ESP_ERROR_CHECK(esp_timer_start_periodic(handler_timer, 10 * portTICK_RATE_MS * 1000));
 }
