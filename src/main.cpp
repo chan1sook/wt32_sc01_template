@@ -25,16 +25,16 @@ static void my_disp_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t
 static void touchpad_read(lv_indev_drv_t *drv, lv_indev_data_t *data);
 
 static void lv_tick_task(void *arg);
-static void ui_update_task(void *arg);
+static void lv_handler_task(void *arg);
 
 esp_timer_handle_t ticker_timer;
-esp_timer_handle_t update_timer;
+esp_timer_handle_t handler_timer;
 const esp_timer_create_args_t ticker_timer_args = {
     .callback = &lv_tick_task,
     .name = "lv_tick_task"};
-const esp_timer_create_args_t ticker_update_args = {
-    .callback = &ui_update_task,
-    .name = "update_timer"};
+const esp_timer_create_args_t handler_timer_args = {
+    .callback = &lv_handler_task,
+    .name = "lv_handler_task"};
 
 void setup()
 {
@@ -76,8 +76,8 @@ void setup()
 
   ui_init();
 
-  ESP_ERROR_CHECK(esp_timer_create(&ticker_update_args, &update_timer));
-  ESP_ERROR_CHECK(esp_timer_start_periodic(update_timer, 10 * portTICK_RATE_MS * 1000));
+  ESP_ERROR_CHECK(esp_timer_create(&handler_timer_args, &handler_timer));
+  ESP_ERROR_CHECK(esp_timer_start_periodic(handler_timer, 10 * portTICK_RATE_MS * 1000));
 }
 
 void loop()
@@ -118,7 +118,7 @@ static void lv_tick_task(void *arg)
   lv_tick_inc(portTICK_RATE_MS);
 }
 
-static void ui_update_task(void *arg)
+static void lv_handler_task(void *arg)
 {
   lv_task_handler();
 }
