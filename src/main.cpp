@@ -26,15 +26,20 @@ static void touchpad_read(lv_indev_drv_t *drv, lv_indev_data_t *data);
 
 static void lv_tick_task(void *arg);
 static void lv_handler_task(void *arg);
+static void update_screen_task(void *arg);
 
 esp_timer_handle_t ticker_timer;
 esp_timer_handle_t handler_timer;
+esp_timer_handle_t update_screen_timer;
 const esp_timer_create_args_t ticker_timer_args = {
     .callback = &lv_tick_task,
     .name = "lv_tick_task"};
 const esp_timer_create_args_t handler_timer_args = {
     .callback = &lv_handler_task,
     .name = "lv_handler_task"};
+const esp_timer_create_args_t update_screen_timer_args = {
+    .callback = &update_screen_task,
+    .name = "update_screen_task"};
 
 void setup()
 {
@@ -81,6 +86,9 @@ void setup()
   // Init LVGL Update Timer
   ESP_ERROR_CHECK(esp_timer_create(&handler_timer_args, &handler_timer));
   ESP_ERROR_CHECK(esp_timer_start_periodic(handler_timer, 10 * portTICK_RATE_MS * 1000));
+
+  ESP_ERROR_CHECK(esp_timer_create(&update_screen_timer_args, &update_screen_timer));
+  ESP_ERROR_CHECK(esp_timer_start_periodic(update_screen_timer, 50 * portTICK_RATE_MS * 1000));
 }
 
 void loop()
@@ -124,4 +132,9 @@ static void lv_tick_task(void *arg)
 static void lv_handler_task(void *arg)
 {
   lv_task_handler();
+}
+
+static void update_screen(void *arg)
+{
+  // Update Screen Logic Here
 }
