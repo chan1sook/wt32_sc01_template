@@ -134,7 +134,7 @@ static void lv_handler_task(void *arg)
   lv_task_handler();
 }
 
-static void update_screen(void *arg)
+static void update_screen_task(void *arg)
 {
   // Update Screen Logic Here
 }
