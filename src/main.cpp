@@ -1,6 +1,5 @@
 #include <Arduino.h>
 #include <Wire.h>
-#include <HTTPClient.h>
 
 #include <SPI.h>
 #include <TFT_eSPI.h>
