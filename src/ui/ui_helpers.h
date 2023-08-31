@@ -1,10 +1,5 @@
-// SquareLine LVGL GENERATED FILE
-// EDITOR VERSION: SquareLine Studio 1.2.0
-// LVGL VERSION: 8.2.0
-// PROJECT: Coldchain-Hotel
-
-#ifndef _COLDCHAIN_HOTEL_UI_HELPERS_H
-#define _COLDCHAIN_HOTEL_UI_HELPERS_H
+#ifndef _WT32SC01_UI_HELPERS_H
+#define _WT32SC01_UI_HELPERS_H
 
 #include "ui.h"
 

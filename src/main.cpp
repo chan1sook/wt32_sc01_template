@@ -5,20 +5,19 @@
 #include <TFT_eSPI.h>
 #include "FT62XXTouchScreen.h"
 
-#include <WiFi.h>
-#include <EEPROM.h>
-
-TFT_eSPI tft = TFT_eSPI();
-FT62XXTouchScreen touchScreen = FT62XXTouchScreen(TFT_WIDTH, PIN_SDA, PIN_SCL);
-
 #include "esp_freertos_hooks.h"
 #include "ui/ui.h"
 
 static const uint16_t screenWidth = 480;
 static const uint16_t screenHeight = 320;
 
+TFT_eSPI tft = TFT_eSPI();
+FT62XXTouchScreen touchScreen = FT62XXTouchScreen(screenHeight, PIN_SDA, PIN_SCL);
+
+#define BUFFER_SIZE (screenWidth * screenHeight / 10)
+
 static lv_disp_draw_buf_t disp_buf;
-static lv_color_t buf[screenWidth * 10];
+static lv_color_t *screenBuffer1;
 
 static void my_disp_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p);
 static void touchpad_read(lv_indev_drv_t *drv, lv_indev_data_t *data);
@@ -61,7 +60,8 @@ void setup()
   touchScreen.begin();
 
   // Display Buffer
-  lv_disp_draw_buf_init(&disp_buf, buf, NULL, screenWidth * 10);
+  screenBuffer1 = (lv_color_t *)ps_malloc(BUFFER_SIZE * sizeof(lv_color_t));
+  lv_disp_draw_buf_init(&disp_buf, screenBuffer1, NULL, BUFFER_SIZE);
 
   // Initialize the display
   static lv_disp_drv_t disp_drv;
