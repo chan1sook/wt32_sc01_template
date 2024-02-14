@@ -8,8 +8,8 @@
 #include "esp_freertos_hooks.h"
 #include "ui/ui.h"
 
-static const uint16_t screenWidth = 480;
-static const uint16_t screenHeight = 320;
+static const uint16_t screenWidth = TFT_WIDTH;
+static const uint16_t screenHeight = TFT_HEIGHT;
 
 TFT_eSPI tft = TFT_eSPI();
 FT62XXTouchScreen touchScreen = FT62XXTouchScreen(screenHeight, PIN_SDA, PIN_SCL);
