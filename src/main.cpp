@@ -22,31 +22,12 @@ static lv_color_t *screenBuffer1;
 static void my_disp_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p);
 static void touchpad_read(lv_indev_drv_t *drv, lv_indev_data_t *data);
 
-static void lv_tick_task(void *arg);
-static void lv_handler_task(void *arg);
-static void update_screen_task(void *arg);
-
-esp_timer_handle_t ticker_timer;
-esp_timer_handle_t handler_timer;
-esp_timer_handle_t update_screen_timer;
-const esp_timer_create_args_t ticker_timer_args = {
-    .callback = &lv_tick_task,
-    .name = "lv_tick_task"};
-const esp_timer_create_args_t handler_timer_args = {
-    .callback = &lv_handler_task,
-    .name = "lv_handler_task"};
-const esp_timer_create_args_t update_screen_timer_args = {
-    .callback = &update_screen_task,
-    .name = "update_screen_task"};
-
 void setup()
 {
   Serial.begin(115200);
 
   // Init LVGL
   lv_init();
-  ESP_ERROR_CHECK(esp_timer_create(&ticker_timer_args, &ticker_timer));
-  ESP_ERROR_CHECK(esp_timer_start_periodic(ticker_timer, portTICK_RATE_MS * 1000));
 
   // Enable TFT
   tft.begin();
@@ -81,18 +62,13 @@ void setup()
 
   // Init generated ui component (and display it)
   ui_init();
-
-  // Init LVGL Update Timer
-  ESP_ERROR_CHECK(esp_timer_create(&handler_timer_args, &handler_timer));
-  ESP_ERROR_CHECK(esp_timer_start_periodic(handler_timer, 10 * portTICK_RATE_MS * 1000));
-
-  ESP_ERROR_CHECK(esp_timer_create(&update_screen_timer_args, &update_screen_timer));
-  ESP_ERROR_CHECK(esp_timer_start_periodic(update_screen_timer, 50 * portTICK_RATE_MS * 1000));
 }
 
 void loop()
 {
-  delay(5);
+  // Logic goes here
+  lv_task_handler();
+  delay(1);
 }
 
 static void my_disp_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p)
@@ -121,19 +97,4 @@ static void touchpad_read(lv_indev_drv_t *drv, lv_indev_data_t *data)
   {
     data->state = LV_INDEV_STATE_REL;
   }
-}
-
-static void lv_tick_task(void *arg)
-{
-  lv_tick_inc(portTICK_RATE_MS);
-}
-
-static void lv_handler_task(void *arg)
-{
-  lv_task_handler();
-}
-
-static void update_screen_task(void *arg)
-{
-  // Update Screen Logic Here
 }
