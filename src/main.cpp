@@ -22,6 +22,10 @@ static lv_color_t *screenBuffer1;
 static void my_disp_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p);
 static void touchpad_read(lv_indev_drv_t *drv, lv_indev_data_t *data);
 
+#define TFT_BL_CHANNEL (0)
+
+void setScreenBrightness(uint16_t percent);
+
 void setup()
 {
   Serial.begin(115200);
@@ -33,9 +37,10 @@ void setup()
   tft.begin();
   tft.setRotation(1);
 
-  // Enable Backlight
-  pinMode(TFT_BL, OUTPUT);
-  digitalWrite(TFT_BL, 1);
+  // Blacklight PWM
+  ledcSetup(TFT_BL_CHANNEL, 5000, 8);
+  ledcAttachPin(TFT_BL, TFT_BL_CHANNEL);
+  setScreenBrightness(100);
 
   // Start TouchScreen
   touchScreen.begin();
@@ -97,4 +102,9 @@ static void touchpad_read(lv_indev_drv_t *drv, lv_indev_data_t *data)
   {
     data->state = LV_INDEV_STATE_REL;
   }
+}
+
+void setScreenBrightness(uint16_t percent)
+{
+  ledcWrite(TFT_BL_CHANNEL, map(percent, 0, 100, 0, 255));
 }
